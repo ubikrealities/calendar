@@ -70,16 +70,16 @@ export default function CancelPage({
 
   return (
     <div className="flex items-center justify-center min-h-screen p-4">
-      <Card className="max-w-md w-full shadow-xl shadow-violet-900/5 backdrop-blur bg-card/95 border-border/50">
+      <Card className="max-w-md w-full rounded-2xl bg-card/80 backdrop-blur-md ring-white/10 shadow-2xl shadow-black/60">
         {loading ? (
           <CardContent className="text-center py-12 text-muted-foreground">
             Loading...
           </CardContent>
         ) : error && !booking ? (
           <CardContent className="text-center py-12">
-            <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 rounded-full bg-red-500/15 flex items-center justify-center mx-auto mb-4">
               <svg
-                className="w-8 h-8 text-red-600"
+                className="w-8 h-8 text-red-400"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={2}
@@ -97,9 +97,9 @@ export default function CancelPage({
           </CardContent>
         ) : cancelled ? (
           <CardContent className="text-center py-12 space-y-4">
-            <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto">
+            <div className="w-16 h-16 rounded-full bg-primary/15 flex items-center justify-center mx-auto">
               <svg
-                className="w-8 h-8 text-green-600"
+                className="w-8 h-8 text-primary"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={2}
@@ -126,7 +126,7 @@ export default function CancelPage({
           </CardContent>
         ) : booking ? (
           <>
-            <CardHeader className="border-b bg-gradient-to-r from-violet-50/50 to-transparent">
+            <CardHeader className="border-b ">
               <div className="flex items-center gap-3">
                 <div
                   className="w-2 h-10 rounded-full"

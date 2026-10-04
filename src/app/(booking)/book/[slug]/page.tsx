@@ -76,12 +76,12 @@ export default function BookingPage({ params }: { params: Promise<{ slug: string
   useEffect(() => {
     if (!selectedDate) return;
     setSlotsLoading(true);
+    setStep("time");
     const dateStr = format(selectedDate, "yyyy-MM-dd");
     fetch(`/api/availability/slots/${slug}/${dateStr}?tz=${tz}`)
       .then((r) => r.json())
       .then((data) => {
         setSlots(data.slots || []);
-        setStep("time");
       })
       .finally(() => setSlotsLoading(false));
   }, [selectedDate, slug, tz]);
@@ -160,7 +160,7 @@ export default function BookingPage({ params }: { params: Promise<{ slug: string
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-muted-foreground">Loading...</div>
+        <div className="h-8 w-8 rounded-full border-2 border-white/10 border-t-primary animate-spin" />
       </div>
     );
   }
@@ -187,20 +187,20 @@ export default function BookingPage({ params }: { params: Promise<{ slug: string
 
   return (
     <div className={`flex items-center justify-center ${isEmbed ? "p-4" : "min-h-screen p-4"}`}>
-      <Card className="max-w-2xl w-full shadow-xl shadow-violet-900/5 border-border/60 backdrop-blur-sm bg-card/95">
+      <Card className="max-w-2xl w-full rounded-2xl bg-card/80 backdrop-blur-md ring-white/10 shadow-2xl shadow-black/60">
         {/* Header */}
-        <CardHeader className="border-b border-border/60 bg-gradient-to-r from-violet-50/50 to-transparent">
+        <CardHeader className="border-b border-border px-6 pt-2">
           <div className="flex items-center gap-3">
             <div
               className="w-2 h-10 rounded-full"
               style={{ backgroundColor: eventType.color }}
             />
             <div>
-              <CardTitle className="text-xl">{eventType.name}</CardTitle>
+              <CardTitle className="text-2xl font-medium tracking-tight">{eventType.name}</CardTitle>
               <div className="flex items-center gap-2 mt-1">
-                <Badge variant="secondary">{eventType.duration} min</Badge>
+                <Badge variant="outline" className="border-white/15 text-muted-foreground font-normal">{eventType.duration} min</Badge>
                 {eventType.locationType && (
-                  <Badge variant="outline">{eventType.locationType.replace("_", " ")}</Badge>
+                  <Badge variant="outline" className="border-white/15 text-muted-foreground font-normal capitalize">{eventType.locationType.replace("_", " ")}</Badge>
                 )}
                 {eventType.price && eventType.price > 0 && (
                   <Badge className="bg-primary/15 text-primary border-0">
@@ -219,12 +219,12 @@ export default function BookingPage({ params }: { params: Promise<{ slug: string
         <CardContent className="p-6">
           {step === "confirmed" && bookingResult ? (
             <div className="text-center py-8 space-y-4">
-              <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto">
-                <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <div className="w-16 h-16 rounded-full bg-primary/15 ring-1 ring-primary/40 flex items-center justify-center mx-auto">
+                <svg className="w-8 h-8 text-primary" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                 </svg>
               </div>
-              <h2 className="text-2xl font-bold">You're booked!</h2>
+              <h2 className="text-3xl font-medium">You&apos;re <span className="serif-accent text-4xl">booked.</span></h2>
               <p className="text-muted-foreground">
                 {format(parseISO(bookingResult.booking.startTime), "EEEE, MMMM d, yyyy")}
                 <br />
@@ -240,7 +240,7 @@ export default function BookingPage({ params }: { params: Promise<{ slug: string
                 <a
                   href={`/api/bookings/${bookingResult.booking.id}/ics`}
                   download
-                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border rounded-md hover:bg-accent transition-colors"
+                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium border border-white/15 rounded-lg hover:bg-white/5 transition-colors"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -270,7 +270,7 @@ export default function BookingPage({ params }: { params: Promise<{ slug: string
                   >
                     &lt;
                   </Button>
-                  <h3 className="font-semibold">
+                  <h3 className="font-medium">
                     {format(currentMonth, "MMMM yyyy")}
                   </h3>
                   <Button
@@ -302,9 +302,9 @@ export default function BookingPage({ params }: { params: Promise<{ slug: string
                         onClick={() => setSelectedDate(day)}
                         className={`
                           aspect-square rounded-lg text-sm font-medium transition-colors
-                          ${isPast ? "text-muted-foreground/40 cursor-not-allowed" : "hover:bg-primary/10 cursor-pointer"}
-                          ${isSelected ? "bg-primary text-primary-foreground hover:bg-primary" : ""}
-                          ${isToday && !isSelected ? "border border-primary" : ""}
+                          ${isPast ? "text-muted-foreground/30 cursor-not-allowed" : isSelected ? "cursor-pointer" : "hover:bg-white/5 cursor-pointer"}
+                          ${isSelected ? "bg-primary text-primary-foreground hover:bg-primary shadow-[0_0_24px_rgba(10,155,255,0.45)]" : ""}
+                          ${isToday && !isSelected ? "ring-1 ring-inset ring-primary/70" : ""}
                         `}
                       >
                         {format(day, "d")}
@@ -322,18 +322,23 @@ export default function BookingPage({ params }: { params: Promise<{ slug: string
               {/* Right panel: time slots or form */}
               <div>
                 {step === "calendar" && (
-                  <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
-                    Select a date to see available times
+                  <div className="flex flex-col items-center justify-center h-full text-center gap-2 py-8">
+                    <p className="text-2xl font-medium">Pick a <span className="serif-accent text-3xl">day.</span></p>
+                    <p className="text-muted-foreground text-sm">Available times will show up here.</p>
                   </div>
                 )}
 
                 {step === "time" && (
                   <div>
-                    <h3 className="font-semibold mb-3">
+                    <h3 className="font-medium mb-3">
                       {selectedDate && format(selectedDate, "EEEE, MMMM d")}
                     </h3>
                     {slotsLoading ? (
-                      <p className="text-muted-foreground text-sm">Loading times...</p>
+                      <div className="space-y-2">
+                        {[0, 1, 2, 3].map((i) => (
+                          <div key={i} className="h-12 rounded-lg bg-white/[0.04] animate-pulse" />
+                        ))}
+                      </div>
                     ) : slots.length === 0 ? (
                       <p className="text-muted-foreground text-sm">No available times for this date.</p>
                     ) : (
@@ -345,7 +350,7 @@ export default function BookingPage({ params }: { params: Promise<{ slug: string
                               setSelectedSlot(slot);
                               setStep("form");
                             }}
-                            className="w-full text-left p-3 rounded-lg border hover:border-primary hover:bg-primary/5 transition-colors"
+                            className="w-full text-left p-3 rounded-lg border border-white/10 bg-white/[0.02] hover:border-primary hover:bg-primary/10 transition-colors"
                           >
                             <span className="font-medium">
                               {new Date(`2000-01-01T${slot.startLocal}:00`).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}
@@ -370,7 +375,7 @@ export default function BookingPage({ params }: { params: Promise<{ slug: string
 
                 {step === "form" && selectedSlot && (
                   <form onSubmit={handleSubmit} className="space-y-4">
-                    <h3 className="font-semibold">
+                    <h3 className="font-medium">
                       {selectedDate && format(selectedDate, "EEE, MMM d")} at{" "}
                       {new Date(`2000-01-01T${selectedSlot.startLocal}:00`).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}
                     </h3>
@@ -420,7 +425,7 @@ export default function BookingPage({ params }: { params: Promise<{ slug: string
                       />
                     </div>
                     <div className="flex gap-2">
-                      <Button type="submit" disabled={submitting} className="flex-1">
+                      <Button type="submit" disabled={submitting} className="flex-1 h-10 rounded-lg font-medium hover:bg-[#2aa8ff] shadow-[0_0_24px_rgba(10,155,255,0.35)]">
                         {submitting
                           ? (eventType.price && eventType.price > 0
                               ? "Redirecting to payment..."
@@ -432,6 +437,7 @@ export default function BookingPage({ params }: { params: Promise<{ slug: string
                       <Button
                         type="button"
                         variant="outline"
+                        className="h-10 rounded-lg border-white/15 bg-transparent hover:bg-white/5"
                         onClick={() => setStep("time")}
                       >
                         Back

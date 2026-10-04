@@ -63,7 +63,7 @@ function SuccessPageInner() {
 
   return (
     <div className="flex items-center justify-center min-h-screen p-4">
-      <Card className="max-w-md w-full shadow-xl shadow-violet-900/5 backdrop-blur bg-card/95 border-border/50">
+      <Card className="max-w-md w-full rounded-2xl bg-card/80 backdrop-blur-md ring-white/10 shadow-2xl shadow-black/60">
         {loading ? (
           <CardContent className="text-center py-12 space-y-4">
             <div className="w-12 h-12 rounded-full border-4 border-primary border-t-transparent animate-spin mx-auto" />
@@ -74,8 +74,8 @@ function SuccessPageInner() {
           </CardContent>
         ) : error ? (
           <CardContent className="text-center py-12 space-y-3">
-            <div className="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center mx-auto">
-              <svg className="w-8 h-8 text-yellow-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+            <div className="w-16 h-16 rounded-full bg-yellow-400/15 flex items-center justify-center mx-auto">
+              <svg className="w-8 h-8 text-yellow-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
               </svg>
             </div>
@@ -84,10 +84,10 @@ function SuccessPageInner() {
           </CardContent>
         ) : booking ? (
           <>
-            <CardHeader className="border-b bg-gradient-to-r from-green-50/50 to-transparent">
+            <CardHeader className="border-b ">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                  <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center">
+                  <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                   </svg>
                 </div>
@@ -112,7 +112,7 @@ function SuccessPageInner() {
                   </p>
                 )}
                 {booking.amountPaid && (
-                  <Badge className="bg-green-100 text-green-900 border-0">
+                  <Badge className="bg-primary/15 text-primary border-0">
                     Paid {(booking.amountPaid / 100).toFixed(2)} USD
                   </Badge>
                 )}

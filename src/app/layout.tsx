@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Red_Hat_Display, Red_Hat_Text, JetBrains_Mono } from "next/font/google";
+import { Red_Hat_Display, Red_Hat_Text, JetBrains_Mono, Geist, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 
 const redHatDisplay = Red_Hat_Display({
@@ -12,6 +12,19 @@ const redHatText = Red_Hat_Text({
   variable: "--font-body",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+});
+
+// Booking pages use Geist + Instrument Serif italic accents (OuiGrowth style)
+const geist = Geist({
+  variable: "--font-geist",
+  subsets: ["latin"],
+});
+
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-serif",
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -32,7 +45,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${redHatDisplay.variable} ${redHatText.variable} ${jetbrainsMono.variable} h-full antialiased`}
+      className={`${redHatDisplay.variable} ${redHatText.variable} ${jetbrainsMono.variable} ${geist.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
