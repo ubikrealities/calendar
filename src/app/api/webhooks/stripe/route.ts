@@ -11,6 +11,7 @@ import {
   executeWorkflows,
 } from "@/lib/workflows";
 import type Stripe from "stripe";
+import { withConsent } from "@/lib/consent";
 
 // Stripe webhook — creates the booking after successful payment.
 // Required env vars:
@@ -57,6 +58,8 @@ export async function POST(request: NextRequest) {
 
   const session = event.data.object as Stripe.Checkout.Session;
   const meta = session.metadata ?? {};
+  // Consent was required at checkout creation; older sessions predate it.
+  const bookingNotes = meta.consentAt ? withConsent(meta.notes, meta.consentAt) : meta.notes || null;
 
   if (session.payment_status !== "paid") {
     return NextResponse.json({ received: true, unpaid: true });
@@ -134,7 +137,7 @@ export async function POST(request: NextRequest) {
       startDate: meta.startTime,
       endDate: meta.endTime,
       location: wantMeet ? undefined : eventType.location || undefined,
-      notes: `Paid booking via Calendar.io\nAmount: ${(session.amount_total ?? 0) / 100} ${session.currency?.toUpperCase()}\nEmail: ${meta.email}${meta.notes ? `\nNotes: ${meta.notes}` : ""}`,
+      notes: `Paid booking via Calendar.io\nAmount: ${(session.amount_total ?? 0) / 100} ${session.currency?.toUpperCase()}\nEmail: ${meta.email}${bookingNotes ? `\nNotes: ${bookingNotes}` : ""}`,
       attendeeEmail: meta.email,
       createMeet: wantMeet,
     });
@@ -161,7 +164,7 @@ export async function POST(request: NextRequest) {
       timezone: meta.timezone,
       status: "confirmed",
       location: finalLocation,
-      notes: meta.notes || null,
+      notes: bookingNotes,
       cancellationToken,
       icalEventId,
       stripeSessionId: session.id,

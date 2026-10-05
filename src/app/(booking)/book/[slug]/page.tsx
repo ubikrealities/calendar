@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { PRIVACY_URL, TERMS_URL } from "@/lib/consent";
 
 interface EventTypeInfo {
   id: string;
@@ -52,6 +53,7 @@ export default function BookingPage({ params }: { params: Promise<{ slug: string
     company: "",
     notes: "",
   });
+  const [consent, setConsent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [bookingResult, setBookingResult] = useState<{
     booking: { id: string; title: string; startTime: string; endTime: string; location: string | null };
@@ -104,7 +106,7 @@ export default function BookingPage({ params }: { params: Promise<{ slug: string
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedSlot || !eventType) return;
+    if (!selectedSlot || !eventType || !consent) return;
     setSubmitting(true);
 
     try {
@@ -113,6 +115,7 @@ export default function BookingPage({ params }: { params: Promise<{ slug: string
         startTime: selectedSlot.start,
         timezone: tz,
         ...formData,
+        consent,
       };
 
       // Paid event → redirect to Stripe Checkout
@@ -434,8 +437,30 @@ export default function BookingPage({ params }: { params: Promise<{ slug: string
                         rows={3}
                       />
                     </div>
+                    <label className="flex items-start gap-3 rounded-lg border border-white/10 bg-white/[0.02] p-3 text-xs leading-relaxed text-muted-foreground cursor-pointer">
+                      <input
+                        type="checkbox"
+                        required
+                        checked={consent}
+                        onChange={(e) => setConsent(e.target.checked)}
+                        className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-[#0599ff]"
+                      />
+                      <span>
+                        I understand this call <strong className="font-medium text-foreground">will be recorded</strong>, and
+                        I agree that OuiGrowth may use the recording and the information I share for internal
+                        purposes, as described in the{" "}
+                        <a href={PRIVACY_URL} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground">
+                          Privacy Policy
+                        </a>
+                        . I also agree to the{" "}
+                        <a href={TERMS_URL} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground">
+                          Terms of Service
+                        </a>
+                        .
+                      </span>
+                    </label>
                     <div className="flex gap-2">
-                      <Button type="submit" disabled={submitting} className="flex-1 h-10 rounded-lg font-medium hover:bg-[#2eaaff] shadow-[0_0_24px_rgba(5,153,255,0.35)]">
+                      <Button type="submit" disabled={submitting || !consent} className="flex-1 h-10 rounded-lg font-medium hover:bg-[#2eaaff] shadow-[0_0_24px_rgba(5,153,255,0.35)]">
                         {submitting
                           ? (eventType.price && eventType.price > 0
                               ? "Redirecting to payment..."

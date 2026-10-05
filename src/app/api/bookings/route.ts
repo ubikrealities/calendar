@@ -8,6 +8,7 @@ import { addMinutes, parseISO } from "date-fns";
 import { createCalendarEvent } from "@/lib/ical-sync";
 import { scheduleWorkflowsForBooking, executeWorkflows } from "@/lib/workflows";
 import { sendBookingConfirmation } from "@/lib/booking-emails";
+import { withConsent } from "@/lib/consent";
 
 const bookingSchema = z.object({
   eventTypeSlug: z.string(),
@@ -19,6 +20,8 @@ const bookingSchema = z.object({
   company: z.string().optional(),
   notes: z.string().optional(),
   customFieldData: z.record(z.string(), z.string()).optional(),
+  // Recording + data-use + ToS/Privacy consent (checkbox on the booking form)
+  consent: z.literal(true),
 });
 
 export async function GET(request: NextRequest) {
@@ -51,7 +54,16 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const data = bookingSchema.parse(body);
+  const parsed = bookingSchema.safeParse(body);
+  if (!parsed.success) {
+    const consentMissing = parsed.error.issues.some((i) => i.path[0] === "consent");
+    return NextResponse.json(
+      { error: consentMissing ? "Please accept the recording and privacy terms to book." : "Invalid booking details" },
+      { status: 400 }
+    );
+  }
+  const data = parsed.data;
+  const consentNotes = withConsent(data.notes, new Date().toISOString());
 
   // Find event type
   const eventType = await db
@@ -122,7 +134,7 @@ export async function POST(request: NextRequest) {
       startDate: startTime.toISOString(),
       endDate: endTime.toISOString(),
       location: wantMeet ? undefined : eventType.location || undefined,
-      notes: `Booked via Calendar.io\nEmail: ${data.email}${data.notes ? `\nNotes: ${data.notes}` : ""}`,
+      notes: `Booked via Calendar.io\nEmail: ${data.email}\nNotes: ${consentNotes}`,
       attendeeEmail: data.email,
       createMeet: wantMeet,
     });
@@ -146,7 +158,7 @@ export async function POST(request: NextRequest) {
       timezone: data.timezone,
       status: "confirmed",
       location: finalLocation,
-      notes: data.notes || null,
+      notes: consentNotes,
       customFieldData: data.customFieldData
         ? JSON.stringify(data.customFieldData)
         : null,

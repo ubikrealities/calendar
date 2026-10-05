@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { addMinutes, parseISO } from "date-fns";
 import { getStripe } from "@/lib/stripe";
+import { CONSENT_VERSION } from "@/lib/consent";
 
 const schema = z.object({
   eventTypeSlug: z.string(),
@@ -15,6 +16,8 @@ const schema = z.object({
   phone: z.string().optional(),
   company: z.string().optional(),
   notes: z.string().optional(),
+  // Recording + data-use + ToS/Privacy consent (checkbox on the booking form)
+  consent: z.literal(true),
 });
 
 // Creates a Stripe Checkout session for a paid event type.
@@ -22,7 +25,15 @@ const schema = z.object({
 // All booking details are stashed in Stripe session metadata and retrieved on completion.
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const data = schema.parse(body);
+  const parsed = schema.safeParse(body);
+  if (!parsed.success) {
+    const consentMissing = parsed.error.issues.some((i) => i.path[0] === "consent");
+    return NextResponse.json(
+      { error: consentMissing ? "Please accept the recording and privacy terms to book." : "Invalid booking details" },
+      { status: 400 }
+    );
+  }
+  const data = parsed.data;
 
   const stripe = getStripe();
   if (!stripe) {
@@ -88,6 +99,8 @@ export async function POST(request: NextRequest) {
       timezone: data.timezone,
       name: data.name,
       email: data.email,
+      consentAt: new Date().toISOString(),
+      consentVersion: CONSENT_VERSION,
       phone: data.phone || "",
       company: data.company || "",
       notes: data.notes || "",

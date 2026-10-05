@@ -1,6 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import { PRIVACY_URL, TERMS_URL } from "@/lib/consent";
 
 const SITE_URL = "https://ouigrowth.com";
 
@@ -34,8 +35,18 @@ export function BrandFooter() {
   if (isEmbed) return null;
 
   return (
-    <footer className="pb-8 pt-2 text-center text-xs text-[#5e5e5e]">
-      © {new Date().getFullYear()} OuiGrowth · The PPC alt-agency
+    <footer className="flex flex-col items-center gap-2 pb-8 pt-2 text-center text-xs text-[#5e5e5e]">
+      <p>Calls are recorded and used internally by OuiGrowth.</p>
+      <p>
+        © {new Date().getFullYear()} OuiGrowth ·{" "}
+        <a href={PRIVACY_URL} className="hover:text-foreground transition-colors underline-offset-2 hover:underline">
+          Privacy Policy
+        </a>{" "}
+        ·{" "}
+        <a href={TERMS_URL} className="hover:text-foreground transition-colors underline-offset-2 hover:underline">
+          Terms of Service
+        </a>
+      </p>
     </footer>
   );
 }
