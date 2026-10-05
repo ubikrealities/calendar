@@ -18,6 +18,7 @@ const PUBLIC_PATHS = [
   "/api/workflows/execute", // cron-callable
   "/api/google/callback", // OAuth redirect target
   "/embed.js",
+  "/brand", // logo etc. used on public booking pages
 ];
 
 // The /api/bookings/[id]/ics download is also public so invitees

@@ -159,7 +159,7 @@ export default function BookingPage({ params }: { params: Promise<{ slug: string
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-[60vh]">
         <div className="h-8 w-8 rounded-full border-2 border-white/10 border-t-primary animate-spin" />
       </div>
     );
@@ -167,7 +167,7 @@ export default function BookingPage({ params }: { params: Promise<{ slug: string
 
   if (error || !eventType) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-[60vh] px-4">
         <Card className="max-w-md w-full">
           <CardContent className="text-center py-12">
             <p className="text-lg font-medium">Event not found</p>
@@ -186,7 +186,17 @@ export default function BookingPage({ params }: { params: Promise<{ slug: string
   const today = startOfDay(new Date());
 
   return (
-    <div className={`flex items-center justify-center ${isEmbed ? "p-4" : "min-h-screen p-4"}`}>
+    <div className={`flex flex-col items-center justify-center ${isEmbed ? "p-4" : "px-4 pt-10 pb-12"}`}>
+      {!isEmbed && (
+        <div className="text-center mb-8">
+          <h1 className="text-4xl md:text-5xl font-medium tracking-tight">
+            Let&apos;s <span className="serif-accent text-[1.15em]">talk.</span>
+          </h1>
+          <p className="text-muted-foreground mt-3 text-[15px]">
+            Pick a time that works. No B-team, you&apos;ll be talking to Kevin.
+          </p>
+        </div>
+      )}
       <Card className="max-w-2xl w-full rounded-2xl bg-card/80 backdrop-blur-md ring-white/10 shadow-2xl shadow-black/60">
         {/* Header */}
         <CardHeader className="border-b border-border px-6 pt-2">
@@ -303,7 +313,7 @@ export default function BookingPage({ params }: { params: Promise<{ slug: string
                         className={`
                           aspect-square rounded-lg text-sm font-medium transition-colors
                           ${isPast ? "text-muted-foreground/30 cursor-not-allowed" : isSelected ? "cursor-pointer" : "hover:bg-white/5 cursor-pointer"}
-                          ${isSelected ? "bg-primary text-primary-foreground hover:bg-primary shadow-[0_0_24px_rgba(10,155,255,0.45)]" : ""}
+                          ${isSelected ? "bg-primary text-primary-foreground hover:bg-primary shadow-[0_0_24px_rgba(5,153,255,0.45)]" : ""}
                           ${isToday && !isSelected ? "ring-1 ring-inset ring-primary/70" : ""}
                         `}
                       >
@@ -425,7 +435,7 @@ export default function BookingPage({ params }: { params: Promise<{ slug: string
                       />
                     </div>
                     <div className="flex gap-2">
-                      <Button type="submit" disabled={submitting} className="flex-1 h-10 rounded-lg font-medium hover:bg-[#2aa8ff] shadow-[0_0_24px_rgba(10,155,255,0.35)]">
+                      <Button type="submit" disabled={submitting} className="flex-1 h-10 rounded-lg font-medium hover:bg-[#2eaaff] shadow-[0_0_24px_rgba(5,153,255,0.35)]">
                         {submitting
                           ? (eventType.price && eventType.price > 0
                               ? "Redirecting to payment..."
