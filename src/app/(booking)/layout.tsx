@@ -14,12 +14,6 @@ export default function BookingLayout({
 }) {
   return (
     <div className="booking-theme min-h-screen relative overflow-hidden flex flex-col">
-      {/* Satoshi, same source as ouigrowth.com */}
-      <link
-        rel="stylesheet"
-        href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700&display=swap"
-        precedence="default"
-      />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_45%_at_50%_100%,rgba(5,153,255,0.26),transparent_70%),radial-gradient(ellipse_50%_35%_at_50%_0%,rgba(5,153,255,0.10),transparent_70%)]" />
       <div className="relative z-10 flex flex-1 flex-col">
         <Suspense>

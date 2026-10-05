@@ -446,8 +446,8 @@ export default function BookingPage({ params }: { params: Promise<{ slug: string
                         className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-[#0599ff]"
                       />
                       <span>
-                        I understand this call <strong className="font-medium text-foreground">will be recorded</strong>, and
-                        I agree that OuiGrowth may use the recording and the information I share for internal
+                        I understand this call <strong className="font-medium text-foreground">will be recorded</strong> and
+                        that OuiGrowth will use the recording and the information I share for internal
                         purposes, as described in the{" "}
                         <a href={PRIVACY_URL} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground">
                           Privacy Policy
